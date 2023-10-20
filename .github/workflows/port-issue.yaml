@@ -56,6 +56,7 @@ jobs:
           ORIGINAL_ISSUE=$(gh issue view -R ${GITHUB_REPOSITORY} ${ORIGINAL_ISSUE_NUMBER} --json title,body,assignees)
           ORIGINAL_TITLE=$(echo "${ORIGINAL_ISSUE}" | jq -r .title)
           TYPE=$(echo "${COMMENT_BODY}" | awk '{ print $1 }' | sed -e 's_/__')
+          echo "${COMMENT_BODY}" | awk '{ print $2 }'
           MILESTONE=$(echo "${COMMENT_BODY}" | awk '{ print $2 }')
           NEW_TITLE="[${TYPE}] ${ORIGINAL_TITLE}"
           if [[ $MILESTONE =~ (v[0-9]\.[0-9]+) ]]; then
