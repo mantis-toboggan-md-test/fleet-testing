@@ -12,9 +12,21 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.event.comment.body, '/backport') || contains(github.event.comment.body, '/forwardport')
     steps:
-      - name: Check milestone
+      - name: Check org membership
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh api orgs/${GITHUB_REPOSITORY_OWNER}/members --paginate | jq -e --arg GITHUB_ACTOR "$GITHUB_ACTOR" '.[] | select(.login == $GITHUB_ACTOR)' > /dev/null; then
+              echo "${GITHUB_ACTOR} is a member"
+              echo "is_member=true" >> $GITHUB_ENV
+          else
+              echo "${GITHUB_ACTOR} is not a member of ${GITHUB_REPOSITORY_OWNER}" >> $GITHUB_STEP_SUMMARY
+              echo "is_member=false" >> $GITHUB_ENV
+          fi
+      - name: Check milestone
+        if: env.is_member == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORIGINAL_ISSUE_NUMBER: ${{ github.event.issue.number }}
           COMMENT_BODY: ${{ github.event.comment.body }}
         run: |
@@ -30,7 +42,9 @@ jobs:
               echo "milestone_exists=false" >> $GITHUB_ENV
            fi
       - name: Port issue
-        if: env.milestone_exists == 'true'
+        if: |
+          env.is_member == 'true' &&
+          env.milestone_exists == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORIGINAL_ISSUE_NUMBER: ${{ github.event.issue.number }}
