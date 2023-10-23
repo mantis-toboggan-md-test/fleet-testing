@@ -18,7 +18,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh api orgs/rancher/members --paginate
+          gh api orgs/rancher/members
           if gh api orgs/${GITHUB_REPOSITORY_OWNER}/members --paginate | jq -e --arg GITHUB_ACTOR "abc" '.[] | select(.login == abc)' > /dev/null; then
               echo "${GITHUB_ACTOR} is a member"
               echo "is_member=true" >> $GITHUB_ENV
