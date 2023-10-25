@@ -63,7 +63,7 @@ jobs:
               NEW_TITLE="[${TYPE} ${MILESTONE}] ${ORIGINAL_TITLE}"
           fi
           additional_cmd+=("--label")
-          additional_cmd+=("QA/none")
+          additional_cmd+=("'QA/none'")
           ORIGINAL_LABELS=$(gh issue view -R ${GITHUB_REPOSITORY} ${ORIGINAL_ISSUE_NUMBER} --json labels --jq '.labels[].name' | grep -v '^\[zube\]:' | paste -sd "," -)
           if [ -n "$ORIGINAL_LABELS" ]; then
               additional_cmd+=(",${ORIGINAL_LABELS}")
