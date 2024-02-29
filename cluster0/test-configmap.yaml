@@ -9,6 +9,6 @@ metadata:
     {}
 #    key: string
 data:
-  key1: val1
+  key1: this has been changed
   key2: val2
   key3: val3
